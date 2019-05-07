@@ -80,10 +80,12 @@ module Elasticsearch
             query = options.delete(:query)
             named_scope = options.delete(:scope)
             preprocess = options.delete(:preprocess)
+            columns = options.delete(:columns)
 
             scope = self
             scope = scope.__send__(named_scope) if named_scope
             scope = scope.instance_exec(&query) if query
+            scope = scope.select(columns) if columns
 
             scope.find_in_batches(options) do |batch|
               batch = self.__send__(preprocess, batch) if preprocess
